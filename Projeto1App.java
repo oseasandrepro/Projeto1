@@ -17,9 +17,9 @@ class Projeto1App
 
 class ListFrame extends JFrame
 {
-	Point pointOfmouse;
-	Figure selectedFigure;
-	Point prevPt;
+	Point pointOfmouse = null;
+	Figure selectedFigure = null;
+	Point prevPt = null;
 	int defaultH = 80;
 	int defaultW = 80;
 	
