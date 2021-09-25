@@ -19,7 +19,9 @@ class ListFrame extends JFrame
 {
 	Point pointOfmouse = null;
 	Figure selectedFigure = null;
+	Figure auxFigure = null;
 	Point prevPt = null;
+	
 	int defaultH = 80;
 	int defaultW = 80;
 	
@@ -69,6 +71,15 @@ class ListFrame extends JFrame
 					fg.add( new Roundrect(x, y, w, h, Color.BLACK, Color.WHITE) );
 					repaint();
 				}
+				else if( (evt.getKeyCode() == KeyEvent.VK_DELETE) ||  evt.getKeyChar() == 'x')
+				{
+					if( selectedFigure != null){
+						fg.remove(selectedFigure);
+						auxFigure = null;
+						selectedFigure = null;
+						repaint();
+					}
+				}
 			}
 		}
 			
@@ -85,13 +96,19 @@ class ListFrame extends JFrame
 					selectedFigure = fig;
 					break;
 				}
+				else
+				{
+					selectedFigure = null;
+					auxFigure = null;
+				}
 			  }
+			  repaint();
 			 }
 			 
-			 public void mouseReleased(MouseEvent evt) {
-				if(selectedFigure != null)
-					selectedFigure = null;
-			}
+			 public void mouseReleased(MouseEvent evt)
+			 {
+					
+			 }
 		}
 		);
 		
@@ -109,17 +126,22 @@ class ListFrame extends JFrame
 			   		}
 			   	}  
 			  
-			  public void mouseMoved(MouseEvent evt){
+			  public void mouseMoved(MouseEvent evt)
+			  {
 			  pointOfmouse = evt.getPoint();
 			  prevPt = pointOfmouse;
 			  for( Figure fig: fg)
 			  {
 				if( (prevPt.getX()>=fig.x && prevPt.getX()<=fig.x+fig.w) && (prevPt.getY()>=fig.y && prevPt.getY()<=fig.y+fig.h) ){
-					selectedFigure = fig;
+					auxFigure = fig;
 					repaint();
 					break;
-			   }
+			    }else{
+			    	auxFigure = null;
+			    }
 			  }
+			  
+			  repaint();
 			}
 		   }
 		);
@@ -137,18 +159,33 @@ class ListFrame extends JFrame
 		{
 			fig.paint(g);
 		}
+		if( auxFigure != null ){
+			rectFormouseOverFigure(g);
+		}
 		if( selectedFigure != null){
-			rectForSelectedFigure(g);
+			rectForselectedFigure(g);
 		}
 	}
 	
-	public void rectForSelectedFigure(Graphics g)
+	public void rectFormouseOverFigure(Graphics g)
 	{
 		Graphics2D g2d = (Graphics2D) g;
 		BasicStroke bs1 = new BasicStroke(3, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
 		g2d.setStroke(bs1);
 	
 		g2d.setColor(Color.RED);
+		
+		g2d.drawRect(auxFigure.x-5,auxFigure.y-5, auxFigure.w+10,auxFigure.h+10);
+	}
+	
+	public void rectForselectedFigure(Graphics g)
+	{
+		Graphics2D g2d = (Graphics2D) g;
+		BasicStroke bs1 = new BasicStroke(3, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
+		g2d.setStroke(bs1);
+	
+		g2d.setColor(Color.BLUE);
+		
 		g2d.drawRect(selectedFigure.x-5,selectedFigure.y-5, selectedFigure.w+10,selectedFigure.h+10);
 	}
 }
