@@ -66,26 +66,26 @@ class ListFrame extends JFrame
 				int y = (int)pointOfmouse.getY();
 				int w = defaultH;
 				int h = defaultW;
-				if( evt.getKeyChar() == 'r')
+				if( evt.getKeyChar() == 'r' || evt.getKeyChar() == 'R')
 				{ 
 					fg.add( new Rect(x, y, w, h, Color.BLACK, Color.WHITE) );
 					repaint();
 				}
-				else if( evt.getKeyChar() == 'e')
+				else if( evt.getKeyChar() == 'e' || evt.getKeyChar() == 'E')
 				{
 					fg.add( new Ellipse(x, y, w, h, Color.BLACK, Color.WHITE) );
 					repaint();
 				}
-				else if( evt.getKeyChar() == 't' )
+				else if( evt.getKeyChar() == 't' || evt.getKeyChar() == 'T' )
 				{
 					fg.add(new Triangle(x, y, w, h, Color.BLACK, Color.WHITE) );
 					repaint();
-				}else if( evt.getKeyChar() == 'w')
+				}else if( evt.getKeyChar() == 'w' || evt.getKeyChar() == 'W')
 				{
 					fg.add( new Roundrect(x, y, w, h, Color.BLACK, Color.WHITE) );
 					repaint();
 				}
-				else if( (evt.getKeyCode() == KeyEvent.VK_DELETE) ||  evt.getKeyChar() == 'x')
+				else if( (evt.getKeyCode() == KeyEvent.VK_DELETE) ||  evt.getKeyChar() == 'x' || evt.getKeyChar() == 'X')
 				{
 					if( selectedFigure != null){
 						fg.remove(selectedFigure);
@@ -94,7 +94,7 @@ class ListFrame extends JFrame
 						repaint();
 					}
 				}
-				else if( evt.getKeyChar() == 'f')
+				else if( evt.getKeyChar() == 'f' || evt.getKeyChar() == 'F')
 				{
 					if( selectedFigure != null){
 						Color newColor = JColorChooser.showDialog(null, "Choose a color", selectedFigure.BorderColor);
@@ -102,7 +102,7 @@ class ListFrame extends JFrame
 						repaint();
 					}
 				}
-				else if( evt.getKeyChar() == 'b')
+				else if( evt.getKeyChar() == 'b' || evt.getKeyChar() == 'B')
 				{
 					if( selectedFigure != null){
 						Color newColor = JColorChooser.showDialog(null, "Choose a color", selectedFigure.BorderColor);
@@ -147,39 +147,14 @@ class ListFrame extends JFrame
 		new MouseAdapter(){
 			 public void mousePressed(MouseEvent evt) 
 			 {
-			  prevPt = evt.getPoint();
-			 
-			  if( selectedFigure == null)
-			  {
-			  	ListIterator<Figure> li = fg.listIterator(fg.size());
-			  	Figure fig = null;
-			  	while( li.hasPrevious() )
-			 	{
-			 		fig = li.previous();
-				 	if( (prevPt.getX()>=fig.x && prevPt.getX()<=fig.x+fig.w) && (prevPt.getY()>=fig.y && prevPt.getY()<=fig.y+fig.h) )
-				 	{
-						selectedFigure = fig;
-						int index = fg.indexOf(selectedFigure);
-						fg.remove(index);
-						fg.add(selectedFigure);
-						break;
-					}
-					else
-					{
-					  selectedFigure = null;
-					  auxFigure = null;
-				       }
-        		 	}
-			 }
-			 else
-			 {
-			 	boolean flag = false;
+			 	boolean flag1 = false;
+			 	boolean flag2 = false;
 			 	for (int i = 0; i < points.length; i++) 
 			 	{
 					if (points[i].contains(prevPt)) 
 					{
 					  pos = i;
-					  flag = true;
+					  flag1 = true;
 					  
 					  //System.out.printf("point %d\n",pos);
 					 
@@ -189,12 +164,26 @@ class ListFrame extends JFrame
 					  break;
 					}
 			      }
-			      if( !flag )
-			      {
-				selectedFigure = null;
-				auxFigure = null;
-			      }
-			 }
+			      
+			      ListIterator<Figure> li = fg.listIterator(fg.size());
+			      Figure fig = null;
+			  	while( li.hasPrevious() )
+			 	{
+			 		fig = li.previous();
+				 	if( (prevPt.getX()>=fig.x && prevPt.getX()<=fig.x+fig.w) && (prevPt.getY()>=fig.y && prevPt.getY()<=fig.y+fig.h) )
+				 	{
+				 		flag2 = true;
+						selectedFigure = fig;
+						int index = fg.indexOf(selectedFigure);
+						fg.remove(index);
+						fg.add(selectedFigure);
+						break;
+					}
+        		 	}
+        		 	
+        		 	if( !flag1 && !flag2){
+        		 		 selectedFigure = null;
+        		 	}
 			  
 			  repaint();
 			 }
