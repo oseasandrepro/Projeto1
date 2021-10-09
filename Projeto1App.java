@@ -78,7 +78,7 @@ class ListFrame extends JFrame
 				}
 				else if( evt.getKeyChar() == 't' || evt.getKeyChar() == 'T' )
 				{
-					fg.add(new Triangle(x, y, w, h, Color.BLACK, Color.WHITE) );
+					fg.add(new Triangle(x, y, w, -1, Color.BLACK, Color.WHITE) );
 					repaint();
 				}else if( evt.getKeyChar() == 'w' || evt.getKeyChar() == 'W')
 				{
@@ -170,7 +170,15 @@ class ListFrame extends JFrame
 			  	while( li.hasPrevious() )
 			 	{
 			 		fig = li.previous();
-				 	if( (prevPt.getX()>=fig.x && prevPt.getX()<=fig.x+fig.w) && (prevPt.getY()>=fig.y && prevPt.getY()<=fig.y+fig.h) )
+			 		int h,w;
+				 	w = fig.w;
+				 	//Tratamento especial para o triangulo
+				 	if(fig.h == -1)
+				 		h = fig.w;
+				 	else
+				 		h = fig.h;
+				 	/////////////////////////////////
+				 	if( (prevPt.getX()>=fig.x && prevPt.getX()<=fig.x+w) && (prevPt.getY()>=fig.y && prevPt.getY()<=fig.y+h) )
 				 	{
 				 		flag2 = true;
 						selectedFigure = fig;
@@ -219,8 +227,15 @@ class ListFrame extends JFrame
           					points[2].x = newPoint2X; 
           					points[2].y = newPoint2Y;
           					
-				   		selectedFigure.w = (int)Math.abs(points[1].getCenterX()-points[0].getCenterX());
-				   		selectedFigure.h = (int)Math.abs(points[1].getCenterY()-points[0].getCenterY());
+          					//Tratamento especial para o triangulo
+          					if( selectedFigure.h != -1)
+				   			selectedFigure.w = (int)Math.abs(points[1].getCenterX()-points[0].getCenterX());
+				   		else
+				   			selectedFigure.w = (int)Math.abs(points[1].getCenterX()-points[0].getCenterX())/2;
+				   		
+				   		//Tratamento especial para o triangulo
+				   		if( selectedFigure.h != -1)
+				   			selectedFigure.h = (int)Math.abs(points[1].getCenterY()-points[0].getCenterY());
         				}
         				else
         				{
@@ -253,7 +268,15 @@ class ListFrame extends JFrame
 			 while( li.hasPrevious() )
 			 {
 			 	fig = li.previous();
-            			if( (prevPt.getX()>=fig.x && prevPt.getX()<=fig.x+fig.w) && (prevPt.getY()>=fig.y && prevPt.getY()<=fig.y+fig.h) ){
+			 	int h,w;
+			 	w = fig.w;
+			 	//Tratamento especial para o triangulo
+			 	if(fig.h == -1)
+			 		h = fig.w;
+			 	else
+			 		h = fig.h;
+			 	/////////////////////////////////	
+            			if( (prevPt.getX()>=fig.x && prevPt.getX()<=fig.x+w) && (prevPt.getY()>=fig.y && prevPt.getY()<=fig.y+h) ){
 					auxFigure = fig;
 					repaint();
 					break;
@@ -298,7 +321,17 @@ class ListFrame extends JFrame
 	
 		g2d.setColor(Color.RED);
 		
-		g2d.drawRect(auxFigure.x-5,auxFigure.y-5, auxFigure.w+10,auxFigure.h+10);
+		//Tratamento especial para o triangulo
+		if( auxFigure.h == -1 )
+		{
+			int w = auxFigure.w;
+			
+			g2d.drawRect(auxFigure.x-w-5, auxFigure.y-5, (auxFigure.w*2)+10, auxFigure.w+10);
+		}
+		else
+			g2d.drawRect(auxFigure.x-5,auxFigure.y-5, auxFigure.w+10,auxFigure.h+10);
+		
+		
 	}
 	
 	public void rectForselectedFigure(Graphics g)
@@ -308,11 +341,33 @@ class ListFrame extends JFrame
 		g2d.setStroke(bs1);
 		
 		int x,y; int w,h;
+		
 		x = selectedFigure.x; y = selectedFigure.y;
-		w = selectedFigure.w; h = selectedFigure.h;
-		points[0].x = (double)x-SIZE; points[0].y = (double)y-SIZE;
-		points[1].x = (double)x+w; points[1].y = (double)y+h; 
-		points[2].x = (double)((x+w)+(x-SIZE))/2; points[2].y = (double)((y+h)+y-SIZE)/2;
+		w = selectedFigure.w;
+		
+		//Tratamento especial para o triangulo
+		if(selectedFigure.h == -1 )
+			h = selectedFigure.w;
+		else
+			h = selectedFigure.h;
+		
+		if( selectedFigure.h == -1 )
+		{
+		
+			x = x-w-5;
+			y = y-5;
+			
+			
+			points[0].x = (double)x-SIZE; points[0].y = (double)y-SIZE;
+			points[1].x = (double)x+w*2; points[1].y = (double)y+h; 
+			points[2].x = (double)((x+w*2)+(x-SIZE))/2; points[2].y = (double)((y+h)+y-SIZE)/2;
+		}
+		else
+		{
+			points[0].x = (double)x-SIZE; points[0].y = (double)y-SIZE;
+			points[1].x = (double)x+w; points[1].y = (double)y+h; 
+			points[2].x = (double)((x+w)+(x-SIZE))/2; points[2].y = (double)((y+h)+y-SIZE)/2;
+		}
 	
 		g2d.setColor(Color.BLUE);
 		for (int i = 0; i < points.length; i++) {
