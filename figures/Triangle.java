@@ -19,7 +19,7 @@ public class Triangle extends Figure
 		BasicStroke bs1 = new BasicStroke(4, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL);
 		g2d.setStroke(bs1);
 		
-		int x[] = {this.x, this.x-w, this.x+w};
+		int x[] = {this.x, this.x-(int)(w/2.0), this.x+(int)(w/2.0)};
 		int y[] = {this.y, this.y+w, this.y+w};
 		
 		g2d.setColor(this.BorderColor);

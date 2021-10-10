@@ -161,6 +161,7 @@ class ListFrame extends JFrame
 					  for(int j = 0; j < 3; j++){
 					      lastPoints[j] = new Point2D.Double(points[j].getX(), points[j].getY());
 					  }
+					  
 					  break;
 					}
 			      }
@@ -227,29 +228,34 @@ class ListFrame extends JFrame
           					points[2].x = newPoint2X; 
           					points[2].y = newPoint2Y;
           					
-          					//Tratamento especial para o triangulo
-          					if( selectedFigure.h != -1)
-				   			selectedFigure.w = (int)Math.abs(points[1].getCenterX()-points[0].getCenterX());
-				   		else
-				   			selectedFigure.w = (int)Math.abs(points[1].getCenterX()-points[0].getCenterX())/2;
-				   		
+          					selectedFigure.w = (int)Math.abs(points[1].getCenterX()-points[0].getCenterX());
+          					
 				   		//Tratamento especial para o triangulo
 				   		if( selectedFigure.h != -1)
 				   			selectedFigure.h = (int)Math.abs(points[1].getCenterY()-points[0].getCenterY());
         				}
         				else
         				{
-        					//System.out.printf("Drag %d\n",pos);
+        					double deltaX = currentPt.x - lastPoints[2].getX();
+        					double deltaY = currentPt.y - lastPoints[2].getY();
         					
-        					Double deltaX = currentPt.x - lastPoints[2].getX();
-          					Double deltaY = currentPt.y - lastPoints[2].getY();
           					
 				   		 for(int j = 0; j < 3; j++){
 				   		 	points[j].x = lastPoints[j].getX() + deltaX;
 				   		 	points[j].y = lastPoints[j].getY() + deltaY;
 				   		 }
-				   		selectedFigure.x = (int)points[0].getCenterX();
-				   		selectedFigure.y = (int)points[0].getCenterY();
+				   		 
+				   		//Tratamento especial para o triangulo
+				   		if( selectedFigure.h == -1)
+				   		{
+				   			selectedFigure.x = (int)points[0].getCenterX()+(selectedFigure.w/2);
+				   			selectedFigure.y = (int)points[0].getCenterY()-selectedFigure.w-SIZE;
+				   		}
+				   		else
+				   		{
+				   			selectedFigure.x = (int)points[0].getCenterX();
+				   			selectedFigure.y = (int)points[0].getCenterY();
+				   		}
 				   		
         				}
         				
@@ -326,7 +332,7 @@ class ListFrame extends JFrame
 		{
 			int w = auxFigure.w;
 			
-			g2d.drawRect(auxFigure.x-w-5, auxFigure.y-5, (auxFigure.w*2)+10, auxFigure.w+10);
+			g2d.drawRect(auxFigure.x-(w/2)-5, auxFigure.y-5, auxFigure.w+10, auxFigure.w+10);
 		}
 		else
 			g2d.drawRect(auxFigure.x-5,auxFigure.y-5, auxFigure.w+10,auxFigure.h+10);
@@ -354,13 +360,13 @@ class ListFrame extends JFrame
 		if( selectedFigure.h == -1 )
 		{
 		
-			x = x-w-5;
-			y = y-5;
+			points[0].x = (double)x-(w/2)-SIZE; points[0].y = (double)y+w;
+			points[1].x = (double)x+(w/2); points[1].y = (double)y+h; 
 			
-			
-			points[0].x = (double)x-SIZE; points[0].y = (double)y-SIZE;
-			points[1].x = (double)x+w*2; points[1].y = (double)y+h; 
-			points[2].x = (double)((x+w*2)+(x-SIZE))/2; points[2].y = (double)((y+h)+y-SIZE)/2;
+			//Calculando o baricentro do triangulo
+			double Gx = (x + (x-(w/2.0)) + (x+(w/2.0))-SIZE )/3.0 ;
+			double Gy = (y + (y+w) + (y+h) -SIZE )/3.0;
+			points[2].x = Gx; points[2].y = Gy;
 		}
 		else
 		{
