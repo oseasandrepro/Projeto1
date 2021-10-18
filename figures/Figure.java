@@ -1,8 +1,10 @@
 package figures;
+import ivisible.IVisible;
+
 import java.awt.*;
 import java.awt.Graphics;
 
-public abstract class Figure
+public abstract class Figure implements IVisible
 {
 	public int x, y;
     	public int w, h;
@@ -18,5 +20,9 @@ public abstract class Figure
 		this.BorderColor = BorderColor;
 		this.BckgColor = BckgColor;
     	}
-	public abstract void paint(Graphics g);
+    	
+    	public boolean clicked (int x, int y) 
+    	{
+        	return ( x>=this.x && x<=this.x+this.w && y>=this.y && y<=this.y+h );
+    	}
 }

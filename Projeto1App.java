@@ -171,20 +171,8 @@ class ListFrame extends JFrame
 			  	while( li.hasPrevious() )
 			 	{
 			 		fig = li.previous();
-			 		int h,w,x;
-				 	w = fig.w;
-				 	//Tratamento especial para o triangulo
-				 	if(fig.h == -1){
-				 		h = fig.w;
-				 		x = fig.x-(w/2);
-				 	}
-				 	else{
-				 		h = fig.h;
-				 		x = fig.x;
-				 	}
-				 	/////////////////////////////////
-				 	//Tratamento especial para o triangulo	
-				 	if( (prevPt.getX()>=x && prevPt.getX()<=x+w) && (prevPt.getY()>=fig.y && prevPt.getY()<=fig.y+h) )
+			 		
+				 	if(  fig.clicked((int)prevPt.getX(), (int)prevPt.getY()) )
 				 	{
 				 		flag2 = true;
 						selectedFigure = fig;
@@ -279,21 +267,8 @@ class ListFrame extends JFrame
 			 while( li.hasPrevious() )
 			 {
 			 	fig = li.previous();
-			 	int h,w;
-			 	w = fig.w;
-			 	//Tratamento especial para o triangulo
-			 	if(fig.h == -1)
-			 		h = fig.w;
-			 	else
-			 		h = fig.h;
-			 	/////////////////////////////////
-			 	int x,y;
-			 	//Tratamento especial para o triangulo
-				if( fig.h == -1 )
-					x = fig.x-(w/2);
-				else 
-					x = fig.x;
-            			if( (prevPt.getX()>=x && prevPt.getX()<=x+w) && (prevPt.getY()>=fig.y && prevPt.getY()<=fig.y+h) ){
+            			if( fig.clicked((int)prevPt.getX(), (int)prevPt.getY()) )
+            			{
 					auxFigure = fig;
 					repaint();
 					break;

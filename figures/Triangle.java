@@ -1,4 +1,5 @@
 package figures;
+
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Ellipse2D.Double;
@@ -28,4 +29,11 @@ public class Triangle extends Figure
 		g2d.setColor(this.BckgColor);
 		g2d.fillPolygon(x,y,3);
         }
+        
+        @Override
+        public boolean clicked (int x, int y) 
+        {
+        	return ( x>=(this.x-(this.w/2)) && x<=(this.x+(this.w/2)) && y>=this.y && y<=this.y+w );
+    	}
+        
 }
