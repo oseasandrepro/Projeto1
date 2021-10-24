@@ -3,8 +3,9 @@ import ivisible.IVisible;
 
 import java.awt.*;
 import java.awt.Graphics;
+import java.io.Serializable;
 
-public abstract class Figure implements IVisible
+public abstract class Figure implements IVisible, Serializable
 {
 	public int x, y;
     	public int w, h;

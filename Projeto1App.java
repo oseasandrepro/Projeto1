@@ -1,10 +1,9 @@
 import java.util.*;
-
+import java.io.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Random;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -24,6 +23,7 @@ class Projeto1App
 class ListFrame extends JFrame
 {
 
+	JToolBar toolbar = new JToolBar("ToolBar-Comandos");
 	Point2D[] lastPoints = new Point2D[3];	
 	
 	Point pointOfmouse = null;
@@ -44,15 +44,43 @@ class ListFrame extends JFrame
                                    new Rectangle2D.Double(100, 75,SIZE, SIZE)};
 	
 	ArrayList<Figure> fg = new ArrayList<Figure>();
-	Random rand = new Random();
-	
+		
 	ListFrame() 
 	{
+		try
+		{
+			FileInputStream f = new FileInputStream("proj.bin");
+			ObjectInputStream o = new ObjectInputStream(f);
+			
+			this.fg = (ArrayList<Figure>)o.readObject();
+			
+			o.close();
+			
+		}catch(Exception x)
+		{
+			System.out.println("ERRO! ao abrir arquivo");
+			System.out.println(x.getMessage());
+			
+		}
   		
-		this.addWindowListener (
+		this.addWindowListener 
+		(
 		    new WindowAdapter() 
 		    {
-		        public void windowClosing (WindowEvent e) {
+		        public void windowClosing (WindowEvent e) 
+		        {
+		        	try{
+		        		FileOutputStream f = new FileOutputStream("proj.bin");
+		        		ObjectOutputStream o = new ObjectOutputStream(f);
+		        		o.writeObject(fg);
+		        		o.flush();
+		        		o.close();
+		        		
+		        	}
+		        	catch(Exception x){
+		        		System.out.println("ERRO! ao salvar arquivo");
+		        		System.out.println(x.getMessage());
+		        	}
 		            System.exit(0);
 		        }
 		    }
