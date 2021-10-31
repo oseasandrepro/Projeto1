@@ -7,9 +7,12 @@ import java.util.ArrayList;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+
 import java.awt.Point;
 
 import figures.*;
+import button_.*;
+import toolbox.*;
 
 class Projeto1App
 {
@@ -22,31 +25,39 @@ class Projeto1App
 
 class ListFrame extends JFrame
 {
-
-	JToolBar toolbar = new JToolBar("ToolBar-Comandos");
-	Point2D[] lastPoints = new Point2D[3];	
-	
-	Point pointOfmouse = null;
-	Figure selectedFigure = null;
-	Figure auxFigure = null;
-	Point prevPt = null;
-	int pos = -1;
-	
 	int SIZE = 8;
 	int defaultH = 80;
 	int defaultW = 80;
 	
 	int windowH = 500;
 	int windowW = 500;
+	int pos = -1;
+	int buttonId = -1;
 	
-	Rectangle2D.Double[] points = { new Rectangle2D.Double(50, 50,SIZE, SIZE), 
-                                   new Rectangle2D.Double(150, 100,SIZE, SIZE),
-                                   new Rectangle2D.Double(100, 75,SIZE, SIZE)};
+	Point2D[] lastPoints = new Point2D[3];
+	Rectangle2D.Double[] points = {	new Rectangle2D.Double(50, 50, SIZE, SIZE), 
+                                   			new Rectangle2D.Double(150, 100, SIZE, SIZE),
+                                   			new Rectangle2D.Double(100, 75, SIZE, SIZE) };
+	
+	Point pointOfmouse = null;
+	Figure selectedFigure = null;
+	Figure auxFigure = null;
+	Point prevPt = null;
+	
+	ArrayList<Button_> buttons = new ArrayList<Button_>();
+	Toolbox mainToolbox;
 	
 	ArrayList<Figure> fg = new ArrayList<Figure>();
 		
 	ListFrame() 
 	{
+		buttons.add( new Button_(1, new Rect(1, 2, 3, 4, Color.BLACK,  Color.BLACK)) );
+		buttons.add( new Button_(2, new Roundrect(1, 2, 3, 4, Color.BLACK,  Color.BLACK)) );
+		buttons.add( new Button_(3, new Ellipse(1, 2, 3, 4, Color.BLACK,  Color.BLACK)) );
+		buttons.add( new Button_(4, new Triangle(1, 2, 3, 4, Color.BLACK,  Color.BLACK)) );
+					      
+		mainToolbox = new Toolbox(10, 50, buttons);
+		
 		try
 		{
 			FileInputStream f = new FileInputStream("proj.bin");
@@ -69,7 +80,8 @@ class ListFrame extends JFrame
 		    {
 		        public void windowClosing (WindowEvent e) 
 		        {
-		        	try{
+		        	try
+		        	{
 		        		FileOutputStream f = new FileOutputStream("proj.bin");
 		        		ObjectOutputStream o = new ObjectOutputStream(f);
 		        		o.writeObject(fg);
@@ -77,7 +89,8 @@ class ListFrame extends JFrame
 		        		o.close();
 		        		
 		        	}
-		        	catch(Exception x){
+		        	catch(Exception x)
+		        	{
 		        		System.out.println("ERRO! ao salvar arquivo");
 		        		System.out.println(x.getMessage());
 		        	}
@@ -86,34 +99,36 @@ class ListFrame extends JFrame
 		    }
 		);
 		
+		repaint();
+		
 		this.addKeyListener(
 			new KeyAdapter() {
 				public void keyPressed(KeyEvent evt)
 				{
 				int x = (int)pointOfmouse.getX();
 				int y = (int)pointOfmouse.getY();
-				int w = defaultH;
-				int h = defaultW;
+				
 				if( evt.getKeyChar() == 'r' || evt.getKeyChar() == 'R')
 				{ 
-					fg.add( new Rect(x, y, w, h, Color.BLACK, Color.WHITE) );
+					fg.add( new Rect(x, y, defaultW, defaultH, Color.BLACK, Color.WHITE) );
 					repaint();
 				}
 				else if( evt.getKeyChar() == 'e' || evt.getKeyChar() == 'E')
 				{
-					fg.add( new Ellipse(x, y, w, h, Color.BLACK, Color.WHITE) );
+					fg.add( new Ellipse(x, y, defaultW, defaultH, Color.BLACK, Color.WHITE) );
 					repaint();
 				}
 				else if( evt.getKeyChar() == 't' || evt.getKeyChar() == 'T' )
 				{
-					fg.add(new Triangle(x, y, w, -1, Color.BLACK, Color.WHITE) );
+					fg.add(new Triangle(x, y, defaultW, -1, Color.BLACK, Color.WHITE) );
 					repaint();
 				}else if( evt.getKeyChar() == 'w' || evt.getKeyChar() == 'W')
 				{
-					fg.add( new Roundrect(x, y, w, h, Color.BLACK, Color.WHITE) );
+					fg.add( new Roundrect(x, y, defaultW, defaultH, Color.BLACK, Color.WHITE) );
 					repaint();
 				}
-				else if( (evt.getKeyCode() == KeyEvent.VK_DELETE) ||  evt.getKeyChar() == 'x' || evt.getKeyChar() == 'X')
+				else if( (evt.getKeyCode() == KeyEvent.VK_DELETE) ||  
+					  evt.getKeyChar() == 'x' || evt.getKeyChar() == 'X')
 				{
 					if( selectedFigure != null){
 						fg.remove(selectedFigure);
@@ -175,6 +190,33 @@ class ListFrame extends JFrame
 		new MouseAdapter(){
 			 public void mousePressed(MouseEvent evt) 
 			 {
+			 	pointOfmouse = evt.getPoint();
+			 	for( Button_ bt: buttons){
+			 		if( bt.clicked( (int)pointOfmouse.getX(), (int)pointOfmouse.getY() ) )
+			 		{
+			 			buttonId = bt.id;
+			 			repaint();
+			 			return;
+			 		}
+			 	}
+			 	
+			 	if( buttonId != -1)
+			 	{
+			 		int x = (int)pointOfmouse.getX();
+					int y = (int)pointOfmouse.getY();
+			 		if(buttonId == 1)
+			 			fg.add( new Rect(x, y, defaultW, defaultH, Color.BLACK, Color.WHITE) );
+			 		else if( buttonId == 2)
+			 			fg.add( new Roundrect(x, y, defaultW, defaultH, Color.BLACK, Color.WHITE) );
+			 		else if( buttonId == 3)
+			 			fg.add( new Ellipse(x, y, defaultW, defaultH, Color.BLACK, Color.WHITE) );
+			 		else if(buttonId == 4)
+			 			fg.add(new Triangle(x, y, defaultW, -1, Color.BLACK, Color.WHITE) );
+			 			
+			 		buttonId = -1;
+			 		repaint();
+			 		return;
+			 	}
 			 	boolean flag1 = false;
 			 	boolean flag2 = false;
 			 	for (int i = 0; i < points.length; i++) 
@@ -200,7 +242,7 @@ class ListFrame extends JFrame
 			 	{
 			 		fig = li.previous();
 			 		
-				 	if(  fig.clicked((int)prevPt.getX(), (int)prevPt.getY()) )
+				 	if(  fig.clicked( (int)prevPt.getX(), (int)prevPt.getY() ) )
 				 	{
 				 		flag2 = true;
 						selectedFigure = fig;
@@ -295,8 +337,8 @@ class ListFrame extends JFrame
 			 while( li.hasPrevious() )
 			 {
 			 	fig = li.previous();
-            			if( fig.clicked((int)prevPt.getX(), (int)prevPt.getY()) )
-            			{
+            			if( fig.clicked((int)prevPt.getX(), (int)prevPt.getY()) ){
+            			
 					auxFigure = fig;
 					repaint();
 					break;
@@ -320,14 +362,18 @@ class ListFrame extends JFrame
 	public void paint(Graphics g)
 	{
 		super.paint(g);
+		
+		mainToolbox.Show(g, buttonId);
 
 		for( Figure fig: this.fg)
 		{
-			fig.paint(g);
+			fig.paint(g, fig.equals(selectedFigure) );
 		}
+		
 		if( auxFigure != null ){
 			rectFormouseOverFigure(g);
 		}
+		
 		if( selectedFigure != null){
 			rectForselectedFigure(g);
 		}
@@ -360,38 +406,10 @@ class ListFrame extends JFrame
 		BasicStroke bs1 = new BasicStroke(3, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
 		g2d.setStroke(bs1);
 		
-		int x,y; int w,h;
-		
-		x = selectedFigure.x; y = selectedFigure.y;
-		w = selectedFigure.w;
-		
-		//Tratamento especial para o triangulo
-		if(selectedFigure.h == -1 )
-			h = selectedFigure.w;
-		else
-			h = selectedFigure.h;
-		
-		if( selectedFigure.h == -1 )
-		{
-		
-			points[0].x = (double)x-(w/2)-SIZE; points[0].y = (double)y+w;
-			points[1].x = (double)x+(w/2); points[1].y = (double)y+h; 
-			
-			//Calculando o baricentro do triangulo
-			double Gx = (x + (x-(w/2.0)) + (x+(w/2.0))-SIZE )/3.0 ;
-			double Gy = (y + (y+w) + (y+h) -SIZE )/3.0;
-			points[2].x = Gx; points[2].y = Gy;
-		}
-		else
-		{
-			points[0].x = (double)x-SIZE; points[0].y = (double)y-SIZE;
-			points[1].x = (double)x+w; points[1].y = (double)y+h; 
-			points[2].x = (double)((x+w)+(x-SIZE))/2; points[2].y = (double)((y+h)+y-SIZE)/2;
-		}
+		points = selectedFigure.GetPointsOfSelection();
 	
-		g2d.setColor(Color.BLUE);
-		for (int i = 0; i < points.length; i++) {
+		g2d.setColor(Color.BLACK);
+		for (int i = 0; i < points.length; i++) 
       			g2d.fill(points[i]);
-   		}
 	}
 }
