@@ -8,26 +8,24 @@ import button_.Button_;
 
 public class Toolbox
 {
-	private int SIZE = 48;
-	public int x,y;
-	//public int Pading;
+	private int x,y;
 	public ArrayList<Button_> buttons = new ArrayList<Button_>();
 	
 	public Toolbox (int x, int y, ArrayList<Button_> bts)
 	{
 		this.x = x;
 		this.y = y;
-		//this.Pading = pading;
 		this.buttons = bts;
 	}
 	
 	public void Show(Graphics g, int selectedId)
 	{
+		int SIZE = 48;
 		Graphics2D g2d = (Graphics2D) g;
 		
 		int numButtons = buttons.size();
 		int w = SIZE;
-		int h = numButtons*48;
+		int h = numButtons*SIZE;
 		
 		BasicStroke bs1 = new BasicStroke(6, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
 		g2d.setStroke(bs1);
@@ -43,7 +41,7 @@ public class Toolbox
         	boolean isSelected = false;
         	for( Button_ bt: this.buttons)
         	{
-        		bt.fig.x = x;
+        		bt.fig.x = x;		
         		bt.fig.y = y;
         		y = y + 40;
         		

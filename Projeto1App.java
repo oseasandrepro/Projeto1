@@ -54,7 +54,7 @@ class ListFrame extends JFrame
 		buttons.add( new Button_(1, new Rect(1, 2, 3, 4, Color.BLACK,  Color.BLACK)) );
 		buttons.add( new Button_(2, new Roundrect(1, 2, 3, 4, Color.BLACK,  Color.BLACK)) );
 		buttons.add( new Button_(3, new Ellipse(1, 2, 3, 4, Color.BLACK,  Color.BLACK)) );
-		buttons.add( new Button_(4, new Triangle(1, 2, 3, 4, Color.BLACK,  Color.BLACK)) );
+		buttons.add( new Button_(4, new Triangle(1, 2, 3, -1, Color.BLACK,  Color.BLACK)) );
 					      
 		mainToolbox = new Toolbox(10, 50, buttons);
 		

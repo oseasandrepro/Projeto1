@@ -31,8 +31,7 @@ public abstract class Figure implements IVisible, Serializable
         	return ( x>=this.x && x<=this.x+this.w && y>=this.y && y<=this.y+h );
     	}
     	
-    	public Rectangle2D.Double[] GetPointsOfSelection()
-    	{
+    	public Rectangle2D.Double[] GetPointsOfSelection(){
     		return pointsIfSelected;
     	}
 }
