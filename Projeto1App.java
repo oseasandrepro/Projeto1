@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.ArrayList;
+import javax.swing.JFileChooser;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -153,6 +154,17 @@ class ListFrame extends JFrame
 						repaint();
 					}
 				}
+				else if( evt.getKeyChar() == 's' || evt.getKeyChar() == 'S' )
+				{
+					JFileChooser fileChooser = new JFileChooser();
+					fileChooser.setDialogTitle("Salvar no formato SVG. Defina o local e o nome do arquivo");   
+					int userSelection = fileChooser.showSaveDialog(null);
+ 					if (userSelection == JFileChooser.APPROVE_OPTION)
+					{
+						File fileToSave = fileChooser.getSelectedFile();
+						CreateSVG(fg, fileToSave.getAbsolutePath() );
+					}
+				}
 				else if (evt.getKeyCode() == KeyEvent.VK_UP) 
 				{
 					if( selectedFigure != null){
@@ -195,8 +207,8 @@ class ListFrame extends JFrame
 			 		if( bt.clicked( (int)pointOfmouse.getX(), (int)pointOfmouse.getY() ) )
 			 		{
 			 			buttonId = bt.id;
-			 			repaint();
-			 			return;
+				 		repaint();
+				 		return;
 			 		}
 			 	}
 			 	
@@ -411,5 +423,71 @@ class ListFrame extends JFrame
 		g2d.setColor(Color.BLACK);
 		for (int i = 0; i < points.length; i++) 
       			g2d.fill(points[i]);
+	}
+	
+	public void CreateSVG(ArrayList<Figure> figs, String fileName)
+	{
+		String format = ".svg";
+		try
+		{
+      			File Stream = new File( fileName+format );
+      			
+      			if ( !Stream.createNewFile() ) {
+      				System.out.println("Arquivo já existe\n");
+      			}
+      			
+      			FileWriter Writer = new FileWriter(fileName+format);
+      			Writer.write("<svg width=\"1500\" height=\"1000\">\n");
+      			
+      			Writer.write(" <rect width=\"100%\" height=\"100%\" fill=\"white\" />\n");
+      			
+      			for( Figure fig: figs)
+			{
+				String ForergbColor = String.format("rgb(%d,%d,%d)",	fig.BorderColor.getRed(), 												fig.BorderColor.getGreen(), 												fig.BorderColor.getBlue() );
+				
+				String BackrgbColor = String.format("rgb(%d,%d,%d)",	fig.BckgColor.getRed(), 											fig.BckgColor.getGreen(), 												fig.BckgColor.getBlue() );
+				if(fig instanceof Rect)
+				{
+					Writer.write("<rect x=\""+ fig.x +"\" y=\""+ fig.y +"\" width=\""+ fig.w +
+					"\" height=\"" + fig.h + "\" style=\"fill:"+ BackrgbColor +
+					";stroke-width:3;stroke:"+ ForergbColor +"\" />\n");
+				}
+				else if( fig instanceof Roundrect)
+				{
+					Writer.write("<rect x=\""+ fig.x +"\" y=\""+ fig.y +
+					"\" rx=\"10\" ry=\"10\" width=\""+ fig.w +
+					"\" height=\"" + fig.h + "\" style=\"fill:"+ BackrgbColor +
+					";stroke-width:3;stroke:"+ ForergbColor +"\" />\n");
+				}
+				else if( fig instanceof Ellipse)
+				{
+					Writer.write("<ellipse cx=\""+ (fig.x + (fig.w*0.5)) +"\" cy=\""+ (fig.y + (fig.h*0.5))+ "\" rx=\""+ (fig.w*0.5) + "\"" +
+					" ry=\""+ (fig.h*0.5) + "\""+
+					" style=\"fill:"+ BackrgbColor +
+					";stroke-width:3;stroke:"+ ForergbColor +"\" />\n");
+				}
+				else if( fig instanceof Triangle)
+				{
+					String points = String.format("%d,%d %d,%d %d,%d",
+					 				  fig.x, fig.y,
+					 				  fig.x-(int)(fig.w/2.0), fig.y+fig.w,
+									  fig.x+(int)(fig.w/2.0), fig.y+fig.w);
+					
+					Writer.write("<polygon points=\""+ points +"\" "+ 
+							"style=\"fill:"+ BackrgbColor +
+							";stroke-width:3;stroke:"+ ForergbColor +"\" />\n");	
+				}
+			}
+      			
+      			Writer.write("</svg>");
+      			
+      			Writer.close();
+      			
+    		}
+    		catch (IOException e)
+    		{
+      			System.out.println("Ocorreu um erro.");
+      			e.printStackTrace();
+    		}
 	}
 }

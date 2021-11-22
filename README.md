@@ -21,3 +21,5 @@ Editor Gráfico Vetorial, primeiro projeto de LP2 - PAE 3 - UERJ - 2021.1
 		2. cor de contorno, tecla f;
 		3. alterar o tamanho, arratar os pequenos quadrados azuis no canto superior esquerdo 
 			ou no canto inferior direito da figura selecionada;
+	**Outros**
+		1. Salvar imagem no formato SVG, tecla s
